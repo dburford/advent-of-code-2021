@@ -9,5 +9,5 @@ to AoC 2020 and 2021.
 
 To run tests:
 ```shell
-gradlew 
+./gradlew test 
 ```
