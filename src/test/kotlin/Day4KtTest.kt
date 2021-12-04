@@ -7,23 +7,25 @@ internal class Day4KtTest {
 
     @Test
     fun `should handle part 1 sample test data`() {
-        assertEquals( 0, solution1( readData(samples) ))
+        val (numbers, boards, lookup) =  readData(samples)
+        assertEquals( 4512, solution1(numbers, boards, lookup))
     }
 
     @Test
     fun `should handle part 1 full test data`() {
-        val testData = readData( loadFromResource(inputFile) )
-        assertEquals( 0, solution1( testData ))
+        val (numbers, boards, lookup) = readData( loadFromResource(inputFile) )
+        assertEquals( 64084, solution1(numbers, boards, lookup))
     }
 
     @Test
     fun `should handle part 2 sample test data`() {
-        assertEquals( 0, solution2( readData(samples) ))
+        val (numbers, boards, lookup) =  readData(samples)
+        assertEquals( 1924, solution2(numbers, boards, lookup))
     }
 
     @Test
     fun `should handle part 2 full test data`() {
-        val testData = readData( loadFromResource(inputFile) )
-        assertEquals( 0, solution2( testData ))
+        val (numbers, boards, lookup) = readData( loadFromResource(inputFile) )
+        assertEquals( 12833, solution2(numbers, boards, lookup))
     }
 }
