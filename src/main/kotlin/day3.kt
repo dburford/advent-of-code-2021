@@ -17,7 +17,7 @@ val samples = """
         01010
     """.trimIndent()
 
-fun readData(str: String) : List<List<Int> > {
+fun readData(str: String): List<List<Int>> {
     return str
         .lines()
         .filterNot { it.isBlank() }
@@ -32,7 +32,7 @@ fun List<Int>.element_add(v: List<Int>) =
     this.zip(v) { a, b -> a + b }
 
 fun List<Int>.toBinaryVal() =
-    this.fold(0, { acc, i -> (acc shl 1) + i } )
+    this.fold(0, { acc, i -> (acc shl 1) + i })
 
 fun List<Int>.flipBinary() =
     this.map { if (it == 1) 0 else 1 }
@@ -41,7 +41,7 @@ fun List<Int>.print() {
     println(this.joinToString("").toString())
 }
 
-fun mostCommon(bitvals: List< List<Int> >) =
+fun mostCommon(bitvals: List<List<Int>>) =
     bitvals
         .reduce { acc, l ->
             acc.element_add(l)
@@ -50,16 +50,16 @@ fun mostCommon(bitvals: List< List<Int> >) =
             if (it * 2 >= bitvals.count()) 1 else 0
         }
 
-fun leastCommon(bitvals: List< List<Int> >) =
+fun leastCommon(bitvals: List<List<Int>>) =
     mostCommon(bitvals).flipBinary()
 
-fun solution1(bitvals: List<List<Int>>) : Int {
+fun solution1(bitvals: List<List<Int>>): Int {
     return mostCommon(bitvals).let {
         it.toBinaryVal() * it.flipBinary().toBinaryVal()
     }
 }
 
-fun filterByMask( bitvals: List<List<Int>>, fn: (List<List<Int>>) -> List<Int>  ) : List<Int> {
+fun filterByMask(bitvals: List<List<Int>>, fn: (List<List<Int>>) -> List<Int>): List<Int> {
     var bit = 0
     var temp = bitvals
     while (temp.count() > 1) {
@@ -72,7 +72,7 @@ fun filterByMask( bitvals: List<List<Int>>, fn: (List<List<Int>>) -> List<Int>  
     return temp.first()
 }
 
-fun solution2(bitvals: List<List<Int>>) : Int {
+fun solution2(bitvals: List<List<Int>>): Int {
     val v1 = filterByMask(bitvals, ::mostCommon)
     val v2 = filterByMask(bitvals, ::leastCommon)
     return v1.toBinaryVal() * v2.toBinaryVal()

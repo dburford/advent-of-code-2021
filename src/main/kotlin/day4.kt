@@ -24,14 +24,21 @@ val samples = """
          2  0 12  3  7
     """.trimIndent()
 
-data class Board(val rows: List<List<Int>>, val boardTotal: Int ) {
-    var rowCounts = MutableList(rows.count()){ 0 }
-    var colCounts = MutableList(rows[0].count()){ 0 }
+data class Board(val rows: List<List<Int>>, val boardTotal: Int) {
+    var rowCounts = MutableList(rows.count()) { 0 }
+    var colCounts = MutableList(rows[0].count()) { 0 }
     var hitCount = 0
+
+    fun hit(row: Int, col: Int): Boolean {
+        rowCounts[row] += 1
+        colCounts[col] += 1
+        hitCount += rows[row][col]
+        return (rowCounts[row] == rows.count() || colCounts[col] == rows[0].count())
+    }
 
     fun print() {
         rows.forEach {
-            it.forEach{print("$it ")}
+            it.forEach { print("$it ") }
             println()
         }
         println()
@@ -40,11 +47,11 @@ data class Board(val rows: List<List<Int>>, val boardTotal: Int ) {
 
 data class IndexRecord(val b: Int, val r: Int, val c: Int) {
     fun print() {
-        print( "[ $b $r $c ] ")
+        print("[ $b $r $c ] ")
     }
 }
 
-fun readData(str: String) : Triple< List<Int>, List<Board>, MutableMap<Int, MutableList<IndexRecord>> > {
+fun readData(str: String): Triple<List<Int>, List<Board>, MutableMap<Int, MutableList<IndexRecord>>> {
 
     // read numbers
     val lines = str.lines().map(String::trim)
@@ -54,7 +61,7 @@ fun readData(str: String) : Triple< List<Int>, List<Board>, MutableMap<Int, Muta
 
     val boards = lines
         .drop(1)
-        .windowed(6, step=6)
+        .windowed(6, step = 6)
         .mapIndexed { b, lines ->
             var boardTotal = 0
             lines
@@ -78,46 +85,59 @@ fun readData(str: String) : Triple< List<Int>, List<Board>, MutableMap<Int, Muta
                 }
         }
 
-    return Triple( numbers, boards, lookup )
+    return Triple(numbers, boards, lookup)
 }
 
-fun solution1(numbers: List<Int>, boards: List<Board>, lookup: MutableMap<Int, MutableList<IndexRecord>>) : Int {
+fun winningBoards(
+    numbers: List<Int>,
+    boards: List<Board>,
+    lookup: MutableMap<Int, MutableList<IndexRecord>>
+): Sequence<Pair<Board, Int>> =
+    sequence() {
 
-    numbers.forEach {
-        val records = lookup.getOrDefault(it, listOf());
-        records.forEach { rec ->
-            val board = boards[rec.b]
-            board.rowCounts[rec.r] += 1
-            board.colCounts[rec.c] += 1
-            board.hitCount += it
+        var boardsPending = MutableList(boards.count()) { it }
 
-            if (board.rowCounts[rec.r] == 5 || board.colCounts[rec.c] == 5) {
-                return (board.boardTotal - board.hitCount) * it
-            }
-        }
-    }
-    return 0
-}
+        var n = 0;
+        while (n < numbers.count() && !boardsPending.isEmpty()) {
 
-fun solution2(numbers: List<Int>, boards: List<Board>, lookup: MutableMap<Int, MutableList<IndexRecord>>) : Int {
+            val records = lookup.getOrDefault(numbers[n], listOf());
 
-    var boardsPending = MutableList(boards.count()) { it }
+            var r = 0
+            while (r < records.count() && !boardsPending.isEmpty()) {
+                val rec = records[r]
+                val board = boards[rec.b]
+                val completed = board.hit(rec.r, rec.c)
 
-    numbers.forEach {
-        val records = lookup.getOrDefault(it, listOf());
-        records.forEach { rec ->
-            val board = boards[rec.b]
-            board.rowCounts[rec.r] += 1
-            board.colCounts[rec.c] += 1
-            board.hitCount += it
-
-            if (board.rowCounts[rec.r] == 5 || board.colCounts[rec.c] == 5) {
-                boardsPending.remove(rec.b)
-                if (boardsPending.isEmpty()) {
-                    return (board.boardTotal - board.hitCount) * it
+                if (completed) {
+                    boardsPending.remove(rec.b)
+                    yield(Pair(board, numbers[n]))
                 }
+                r += 1
             }
+            n += 1
         }
     }
-    return 0
-}
+
+
+fun solution1(
+    numbers: List<Int>,
+    boards: List<Board>,
+    lookup: MutableMap<Int, MutableList<IndexRecord>>
+): Int =
+    winningBoards(numbers, boards, lookup)
+        .first()
+        .let { (board, lastNumber) ->
+            (board.boardTotal - board.hitCount) * lastNumber
+        }
+
+
+fun solution2(
+    numbers: List<Int>,
+    boards: List<Board>,
+    lookup: MutableMap<Int, MutableList<IndexRecord>>
+): Int =
+    winningBoards(numbers, boards, lookup)
+        .last()
+        .let { (board, lastNumber) ->
+            (board.boardTotal - board.hitCount) * lastNumber
+        }

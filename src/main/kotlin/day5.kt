@@ -17,13 +17,27 @@ val samples = """
         5,5 -> 8,2
     """.trimIndent()
 
-data class Point( val x: Int, val y: Int ) {
+data class Point(val x: Int, val y: Int) {
     fun print() {
         print("(${x},${y})")
     }
 }
 
-data class LineSegment(val p1: Point, val p2: Point ) {
+data class LineSegment(val p1: Point, val p2: Point) {
+
+    fun walkTheLine(): Sequence<Point> =
+        sequence() {
+            val xrange = (p2.x - p1.x)
+            val yrange = (p2.y - p1.y)
+            val range = max(abs(xrange), abs(yrange))
+            val dx = xrange / range
+            val dy = yrange / range
+
+            (0..range).map { step ->
+                yield(Point(p1.x + step * dx, p1.y + step * dy))
+            }
+        }
+
     fun print() {
         p1.print(); print(" -> "); p2.print()
         println()
@@ -34,7 +48,7 @@ fun readData(str: String) =
     str
         .lines()
         .map(String::trim)
-        .map{ line ->
+        .map { line ->
             line
                 .split("->".toRegex())
                 .map { point ->
@@ -43,11 +57,11 @@ fun readData(str: String) =
                         .map(String::trim)
                         .map(String::toInt)
                 }
-                .map { (x,y) ->
-                    Point(x,y)
+                .map { (x, y) ->
+                    Point(x, y)
                 }
         }
-        .map{ (p1, p2) ->
+        .map { (p1, p2) ->
             LineSegment(p1, p2)
         }
 
@@ -56,32 +70,26 @@ fun solution(segments: List<LineSegment>): Int {
     var overlappingPoints = mutableSetOf<Point>()
 
     segments
-        .forEach { s ->
-            val xrange = (s.p2.x - s.p1.x)
-            val yrange = (s.p2.y - s.p1.y)
-            val range = max(abs(xrange), abs(yrange))
-            val dx = xrange / range
-            val dy = yrange / range
-
-            (0 .. range).map { step ->
-                val p = Point(s.p1.x + step*dx, s.p1.y + step*dy)
-
-                if (overlapCount.merge(p,1, Int::plus) == 2) {
-                    overlappingPoints.add(p)
+        .forEach { segment ->
+            segment
+                .walkTheLine()
+                .forEach { point ->
+                    if (overlapCount.merge(point, 1, Int::plus) == 2) {
+                        overlappingPoints.add(point)
+                    }
                 }
-            }
         }
 
     return overlappingPoints.count()
 }
 
-fun solution1(segments: List<LineSegment>) : Int {
+fun solution1(segments: List<LineSegment>): Int {
     return solution(
         segments
             .filter { it.p1.x == it.p2.x || it.p1.y == it.p2.y }
     )
 }
 
-fun solution2(segments: List<LineSegment>) : Int {
+fun solution2(segments: List<LineSegment>): Int {
     return solution(segments)
 }
