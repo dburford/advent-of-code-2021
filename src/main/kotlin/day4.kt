@@ -1,6 +1,6 @@
 package day4
 
-val inputFile = "/day4.txt"
+const val inputFile = "/day4.txt"
 
 val samples = """
         7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
@@ -60,12 +60,13 @@ fun readData(str: String): Triple<List<Int>, List<Board>, MutableMap<Int, Mutabl
     var lookup = mutableMapOf<Int, MutableList<IndexRecord>>()
 
     val boards = lines
+        .asSequence()
+        .filter { it.isNotBlank() }
         .drop(1)
-        .windowed(6, step = 6)
+        .chunked(5)
         .mapIndexed { b, lines ->
             var boardTotal = 0
             lines
-                .drop(1)
                 .mapIndexed { r, line ->
                     line
                         .split("\\s+".toRegex())
@@ -84,6 +85,7 @@ fun readData(str: String): Triple<List<Int>, List<Board>, MutableMap<Int, Mutabl
                     Board(it, boardTotal)
                 }
         }
+        .toList()
 
     return Triple(numbers, boards, lookup)
 }
