@@ -66,8 +66,8 @@ fun readData(str: String) =
         }
 
 fun solution(segments: List<LineSegment>): Int {
-    var overlapCount = mutableMapOf<Point, Int>()
-    var overlappingPoints = mutableSetOf<Point>()
+    val overlapCount = mutableMapOf<Point, Int>()
+    val overlappingPoints = mutableSetOf<Point>()
 
     segments
         .forEach { segment ->

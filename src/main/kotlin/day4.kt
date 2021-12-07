@@ -57,7 +57,7 @@ fun readData(str: String): Triple<List<Int>, List<Board>, MutableMap<Int, Mutabl
     val lines = str.lines().map(String::trim)
     val numbers = lines.first().split(",").map(String::toInt)
 
-    var lookup = mutableMapOf<Int, MutableList<IndexRecord>>()
+    val lookup = mutableMapOf<Int, MutableList<IndexRecord>>()
 
     val boards = lines
         .asSequence()
@@ -97,12 +97,12 @@ fun winningBoards(
 ): Sequence<Pair<Board, Int>> =
     sequence() {
 
-        var boardsPending = MutableList(boards.count()) { it }
+        val boardsPending = MutableList(boards.count()) { it }
 
-        var n = 0;
+        var n = 0
         while (n < numbers.count() && !boardsPending.isEmpty()) {
 
-            val records = lookup.getOrDefault(numbers[n], listOf());
+            val records = lookup.getOrDefault(numbers[n], listOf())
 
             var r = 0
             while (r < records.count() && !boardsPending.isEmpty()) {

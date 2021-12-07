@@ -38,7 +38,7 @@ fun List<Int>.flipBinary() =
     this.map { if (it == 1) 0 else 1 }
 
 fun List<Int>.print() {
-    println(this.joinToString("").toString())
+    println(this.joinToString(""))
 }
 
 fun mostCommon(bitvals: List<List<Int>>) =

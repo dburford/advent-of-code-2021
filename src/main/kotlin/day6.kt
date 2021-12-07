@@ -12,7 +12,7 @@ fun readData(str: String) =
 
 fun solution(initialState: List<Int>, daysToRun: Int): Long {
 
-    var ageCounts = MutableList<Long>(9) { 0L }
+    val ageCounts = MutableList(9) { 0L }
     initialState.forEach { ageOfFish ->
         ageCounts[ageOfFish] += 1L
     }

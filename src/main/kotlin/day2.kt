@@ -1,6 +1,7 @@
 package day2
 
-val inputFile = "/day2.txt"
+const val inputFile = "/day2.txt"
+
 val samples = """
         forward 5
         down 5
