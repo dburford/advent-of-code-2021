@@ -36,11 +36,19 @@ fun solution1(positions: List<Int>) = totalCost(positions, median(positions), ::
 
 fun solution2(positions: List<Int>): Int {
 
+    // ---------C-N------------
+    // ---------m-m+1----------
+
+    // ---------N-C------------
+    // ---------m-m------------
+
     // initial guess is median, thereafter look for minimum cost
     var delta = 1
     var m = median(positions)
     var currentCost = totalCost(positions, m, ::cost2)
     var nextCost = totalCost(positions, m + delta, ::cost2)
+
+    // cost increasing in +x direction, so switch direction
     if (nextCost > currentCost) {
         m += delta
         nextCost = currentCost
