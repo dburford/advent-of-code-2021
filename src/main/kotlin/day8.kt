@@ -1,5 +1,7 @@
 package day8
 
+import mapToFrequencies
+
 const val inputFile = "/day8.txt"
 
 val samples = """
@@ -44,25 +46,22 @@ fun readData(str: String): List<Pair<List<String>, List<String>>> =
 fun solution1(displayEntries: List<Pair<List<String>, List<String>>>): Int {
     // 1: 2, 7: 3, 4: 4, 8: 7
     val uniqueCodes = listOf(2, 3, 4, 7)
-    return displayEntries.fold(0, { acc, (signals, outputs) ->
+    return displayEntries.fold(0, { acc, (_, outputs) ->
         acc + outputs.filter {
             it.count() in uniqueCodes
         }.count()
     })
 }
 
-fun letterFrequencies(words: List<String>): Map<Char, Int> {
-    val frequencies = mutableMapOf<Char, Int>()
+fun letterFrequencies(words: List<String>) =
     words
         .map { it.filterNot { it.isWhitespace() } }
-        .fold(frequencies, { f, signals ->
-            signals.fold(f, { f, i ->
-                frequencies.merge(i, 1, Int::plus)
-                frequencies
-            })
+        .fold(mutableMapOf<Char, Int>(), { f, signals ->
+            signals.toList().mapToFrequencies().forEach {
+                f.merge(it.key, it.value, Int::plus)
+            }
+            f
         })
-    return frequencies
-}
 
 fun noDupsInverted(m: Map<Char, Int>): Map<Int, Char> {
     return m
@@ -117,7 +116,7 @@ fun solution2(displayEntries: List<Pair<List<String>, List<String>>>): Int {
             // that then breaks the tie between a, c so we can determine a
             matches['a'] = testFrequencies
                 .filterValues { it == 8 }
-                .filterNot { (k, v) ->
+                .filterNot { (k, _) ->
                     k == matches['c']
                 }.keys.first()
 

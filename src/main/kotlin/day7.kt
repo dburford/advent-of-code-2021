@@ -1,6 +1,7 @@
 package day7
 
 import kotlin.math.abs
+import median
 
 const val inputFile = "/day7.txt"
 
@@ -10,31 +11,21 @@ fun readData(str: String) =
     str
         .split(",")
         .map(String::trim)
-        .map(String::toInt)
+        .map(String::toLong)
 
-fun median(positions: List<Int>): Int {
-    val n = positions.count()
-    val sorted = positions.sorted()
-    return when (n % 2) {
-        1 -> sorted[n / 2]
-        0 -> (sorted[n / 2] + sorted[(n / 2) - 1]) / 2
-        else -> 0
-    }
-}
+fun cost1(x1: Long, x2: Long) = abs(x1 - x2)
 
-fun cost1(x1: Int, x2: Int) = abs(x1 - x2)
-
-fun cost2(x1: Int, x2: Int) =
+fun cost2(x1: Long, x2: Long) =
     abs(x1 - x2).let { (it * it + it) / 2 }
 
-fun totalCost(positions: List<Int>, m: Int, cost: (Int, Int) -> Int) =
-    positions.fold(0) { acc, x ->
+fun totalCost(positions: List<Long>, m: Long, cost: (Long, Long) -> Long) =
+    positions.fold(0L) { acc, x ->
         acc + cost(m, x)
     }
 
-fun solution1(positions: List<Int>) = totalCost(positions, median(positions), ::cost1)
+fun solution1(positions: List<Long>) = totalCost(positions, positions.median(), ::cost1)
 
-fun solution2(positions: List<Int>): Int {
+fun solution2(positions: List<Long>): Long {
 
     // ---------C-N------------
     // ---------m-m+1----------
@@ -44,7 +35,7 @@ fun solution2(positions: List<Int>): Int {
 
     // initial guess is median, thereafter look for minimum cost
     var delta = 1
-    var m = median(positions)
+    var m = positions.median()
     var currentCost = totalCost(positions, m, ::cost2)
     var nextCost = totalCost(positions, m + delta, ::cost2)
 

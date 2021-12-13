@@ -1,5 +1,6 @@
 package day9
 
+import neighborOffsets
 import java.util.*
 
 const val inputFile = "/day9.txt"
@@ -20,17 +21,10 @@ fun readData(str: String) =
             it.toList().map { it.toString().toInt() }.toIntArray()
         }.toTypedArray()
 
-val neighborDeltas = listOf(
-    Pair(-1, 0),
-    Pair(1, 0),
-    Pair(0, -1),
-    Pair(0, 1)
-)
-
 fun solution1(grid: Array<IntArray>) =
     grid.foldIndexed(0) { r, acc, row ->
         acc + row.filterIndexed { c, x ->
-            neighborDeltas
+            neighborOffsets
                 .mapNotNull { (dr, dc) ->
                     grid.getOrNull(r + dr)?.getOrNull(c + dc)
                 }
@@ -49,7 +43,7 @@ private fun visit(
 
     visited += cell
 
-    return 1 + neighborDeltas
+    return 1 + neighborOffsets
         .mapNotNull { (dr, dc) ->
             grid.getOrNull(r + dr)?.getOrNull(c + dc)?.let {
                 visit(r + dr, c + dc, grid, visited)
