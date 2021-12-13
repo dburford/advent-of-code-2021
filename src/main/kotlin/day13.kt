@@ -54,45 +54,18 @@ fun readData(str: String): Pair<List<Pair<Int, Int>>, List<Pair<Char, Int>>> {
 }
 
 
-fun foldX(code: List<Pair<Int, Int>>, value: Int): Set<Pair<Int, Int>> {
+fun foldX(code: List<Pair<Int, Int>>, value: Int): List<Pair<Int, Int>> {
     val base = code
-        .filter { (x, y) ->
-            x < value
-        }
+        .filter { (x, y) -> x < value }
 
     val folded = code
-        .filter { (x, y) ->
-            x > value
-        }
+        .filter { (x, y) -> x > value }
         .map { (x, y) ->
-            Pair(value - (x-value), y)
+            Pair(value - (x - value), y)
         }
 
-    val s: MutableSet<Pair<Int, Int>> = mutableSetOf()
-    s.addAll(base)
-    s.addAll(folded)
-    return s
-}
-
-fun foldY(code: List<Pair<Int, Int>>, value: Int): Set<Pair<Int, Int>> {
-    val base = code
-        .filter { (x, y) ->
-            y < value
-        }
-
-    val folded = code
-        .filter { (x, y) ->
-            y > value
-        }
-        .map { (x, y) ->
-            Pair(x, value - (y - value))
-        }
-
-    val s: MutableSet<Pair<Int, Int>> = mutableSetOf()
-    s.addAll(base)
-    s.addAll(folded)
-
-    return s
+    val s = base.toMutableSet().apply { addAll(folded) }
+    return s.toList()
 }
 
 fun printGrid(grid: List<List<Char>>) {
@@ -116,40 +89,37 @@ fun printCode(code: List<Pair<Int, Int>>, fold: Int) {
             grid[fold][it] = '-'
         }
     }
-
     printGrid(grid)
 }
 
-fun solution1(input: Pair< List<Pair<Int, Int>>, List<Pair<Char, Int>>>): Int {
-    // first instruction
-    val (code, folds) = input
+fun transform(code: List<Pair<Int, Int>>) = code.map { (x, y) -> Pair(y, x) }
 
-    printCode(code, 7)
+fun solution1(input: Pair<List<Pair<Int, Int>>, List<Pair<Char, Int>>>): Int {
+    val (code, folds) = input
 
     val (axis, value) = folds[0]
     val s = when (axis) {
         'x' -> foldX(code, value)
-        'y' -> foldY(code, value)
+        'y' -> transform(foldX(transform(code), value))
         else -> throw Exception("Unexpected input")
     }
 
     return s.count()
 }
 
-fun solution2(input: Pair< List<Pair<Int, Int>>, List<Pair<Char, Int>>>): Int {
-    // first instruction
+fun solution2(input: Pair<List<Pair<Int, Int>>, List<Pair<Char, Int>>>): Int {
     val (code, folds) = input
-    var s = code.toSet()
 
+    var s = code
     folds.forEach { (axis, value) ->
         s = when (axis) {
-            'x' -> foldX(s.toList(), value)
-            'y' -> foldY(s.toList(), value)
+            'x' -> foldX(s, value)
+            'y' -> transform(foldX(transform(s), value))
             else -> throw Exception("Unexpected input")
         }
     }
 
-    printCode(s.toList(), -1)
+    printCode(s, -1)
     return 0
 }
 
