@@ -36,6 +36,12 @@ fun <T : Comparable<T>> Iterable<T>.mapToFrequencies() =
         f
     })
 
+fun <T : Comparable<T>> Iterable<T>.mapToFrequenciesLong() =
+    fold(mutableMapOf<T, Long>(), { f, i ->
+        f.merge(i, 1, Long::plus)
+        f
+    })
+
 fun printGrid(grid: List<List<Int>>) {
     grid.forEach {
         it.forEach {
