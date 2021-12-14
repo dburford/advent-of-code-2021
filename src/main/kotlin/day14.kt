@@ -86,6 +86,8 @@ fun solution(input: Pair<String, Map<String, String>>, depth: Int): Long {
         counts["$it"] = counts.getOrDefault("$it", 0) + 1
     }
 
+    cache.clear()
+
     template
         .windowed(2)
         .forEach { counts.mergeCounts(dfs(it, depth, mappings)) }
