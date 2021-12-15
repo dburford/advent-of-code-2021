@@ -1,3 +1,9 @@
+data class Point(val x: Int, val y: Int) {
+    fun print() {
+        print("(${x},${y})")
+    }
+}
+
 val neighborOffsets = listOf(
     Pair(-1, 0),
     Pair(1, 0),
@@ -49,4 +55,23 @@ fun printGrid(grid: List<List<Int>>) {
         }
         println()
     }
+}
+
+fun printCharGrid(grid: List<List<Char>>) {
+    grid.forEach {
+        it.forEach {
+            print("$it")
+        }
+        println()
+    }
+}
+
+fun printPoints(points: List<Point>) {
+    val maxX = points.maxOf { (x, _) -> x }
+    val maxY = points.maxOf { (_, y) -> y }
+
+    val grid = MutableList(maxY + 1) { MutableList(maxX + 1) { '.' } }
+    points.forEach { (x, y) -> grid[y][x] = '#' }
+
+    printCharGrid(grid)
 }

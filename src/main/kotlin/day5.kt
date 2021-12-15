@@ -1,5 +1,6 @@
 package day5
 
+import Point
 import kotlin.math.*
 
 val inputFile = "/day5.txt"
@@ -17,11 +18,7 @@ val samples = """
         5,5 -> 8,2
     """.trimIndent()
 
-data class Point(val x: Int, val y: Int) {
-    fun print() {
-        print("(${x},${y})")
-    }
-}
+
 
 data class LineSegment(val p1: Point, val p2: Point) {
 
